@@ -2,8 +2,9 @@ import React,{ useState, useEffect }  from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import Form from 'react-bootstrap/Form'
 import Button from 'react-bootstrap/Button';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 import styles from "../styles/loginForm.module.scss";
-
 
 export const Login = () => {
 const [email, setEmail] = useState("");
@@ -14,6 +15,7 @@ const [emailError, setEmailError] = useState("The email can`t be empty");
 const [passwordError, setPasswordError] = useState("The password can`t be empty");
 const [formValid, setFormValid] =useState (false)
 const [submitSuccess, setSubmitSuccess] = useState(false);
+
 
 useEffect(()=>{
   if (emailError || passwordError){
@@ -63,7 +65,7 @@ const handleSubmit = async (event) => {
 
   if (formValid) {
     try {
-      const response = await fetch("https://staging-api.takyon.io/auth/login", {
+        const response = await fetch("https://staging-api.takyon.io/auth/login", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -71,15 +73,14 @@ const handleSubmit = async (event) => {
         body: JSON.stringify({ email, password }),
       });
 
-      if (response.ok) {
+        if (response.ok) {
         setSubmitSuccess(true);
-        console.log("Submit successful")
-        
+        toast.success("Login successful!");
       } else {
-        console.error("Failed to submit form");
+        toast.error("Invalid email or password. Please try again.");
       }
     } catch (error) {
-      console.error("Error during form submission:", error);
+      toast.error("Failed to log in. Please try again later.");
     }
   }
 };
@@ -122,11 +123,12 @@ return (
         type="submit" 
         className={styles.btnPrimary}
         disabled={!formValid}
-        onClick={handleSubmit}>
-        
-          LOGIN
+        onClick={handleSubmit}
+        > 
+        LOGIN
         </Button>
       </Form>
+      <ToastContainer />
     </div>
   );
 };
