@@ -13,6 +13,7 @@ const [passwordDirty, setPasswordDirty] = useState(false);
 const [emailError, setEmailError] = useState("The email can`t be empty");
 const [passwordError, setPasswordError] = useState("The password can`t be empty");
 const [formValid, setFormValid] =useState (false)
+const [submitSuccess, setSubmitSuccess] = useState(false);
 
 useEffect(()=>{
   if (emailError || passwordError){
@@ -37,8 +38,8 @@ const passwordHandler = (event) => {
 
   if (!event.target.value) {
     setPasswordError("The password can't be empty");
-  } else if (event.target.value.length < 4 || event.target.value.length > 8) {
-    setPasswordError("The password must be at least 4 characters long and no longer than 8");
+  } else if (event.target.value.length < 4 || event.target.value.length > 10) {
+    setPasswordError("The password must be at least 4 characters long and no longer than 10");
   } else {
     setPasswordError("");
   }
@@ -57,6 +58,34 @@ const blurHandler = (event) =>{
   }
 }
   
+const handleSubmit = async (event) => {
+  event.preventDefault();
+
+  if (formValid) {
+    try {
+      const response = await fetch("https://staging-api.takyon.io/auth/login", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ email, password }),
+      });
+
+      if (response.ok) {
+        setSubmitSuccess(true);
+        console.log("Submit successful")
+        
+      } else {
+        console.error("Failed to submit form");
+      }
+    } catch (error) {
+      console.error("Error during form submission:", error);
+    }
+  }
+};
+
+
+
 return (
     <div className={styles.container}>
       <Form className={styles.loginForm}>
@@ -92,7 +121,9 @@ return (
         variant="primary" 
         type="submit" 
         className={styles.btnPrimary}
-        disabled={!formValid}>
+        disabled={!formValid}
+        onClick={handleSubmit}>
+        
           LOGIN
         </Button>
       </Form>
