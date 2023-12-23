@@ -29,7 +29,7 @@ const emailHandler = (event) => {
   setEmail(event.target.value)
   const regex = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
   if (!regex.test((event.target.value).toLowerCase())){
-    setEmailError("Wong email")
+    setEmailError("Wrong email")
   } else {
     setEmailError("")
   }
